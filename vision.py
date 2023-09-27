@@ -59,7 +59,11 @@ class vision_model(nn.Module):
         self.flatten = nn.Flatten()
 
         self.fc1 = nn.Linear(512,256)
+        self.fc_bn1 = nn.BatchNorm2d(256)
+
         self.fc2 = nn.Linear(256,512)
+        self.fc_bn2 = nn.BatchNorm2d(512)
+
         self.fc3 = nn.Linear(512,n_classes)
 
     def forward(self, x):
@@ -69,7 +73,10 @@ class vision_model(nn.Module):
         x = self.dropout(self.pool(self.act(self.bn4(self.conv4(x)))))
 
         x = self.flatten(x)
-        x = self.fc3(self.fc2(self.fc1(x)))
+        x = self.dropout(self.act(self.fc_bn1(self.fc1(x))))
+        x = self.dropout(self.act(self.fc_bn2(self.fc2(x))))
+
+        x = self.fc3(x)
 
         return x
     
