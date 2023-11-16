@@ -179,3 +179,21 @@ body {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   margin: 20px;
 }
+
+.webcome-circle-open {
+  margin-bottom: 30px;
+  width: 45%;
+  margin-left: 27%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+.webcome-circle-close {
+  margin-bottom: 30px;
+  width: 17%;
+  margin-left: 40%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}

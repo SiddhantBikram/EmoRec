@@ -1,13 +1,43 @@
 import React, { useState } from "react";
 import Webcam from "react-webcam";
+import IconButton from "@mui/material/IconButton";
+import VideoCameraFrontIcon from '@mui/icons-material/VideoCameraFront';
+import CancelIcon from "@mui/icons-material/Cancel";
+import {  Button, Tooltip } from '@mui/material';
+import './ChatPage.css';
 
-const WebcamStreamCapture = () => {
+
+const WebcamStreamCapture = (toggleListening, resetTranscript) => {
     const webcamRef = React.useRef(null);
     const mediaRecorderRef = React.useRef(null);
     const [capturing, setCapturing] = React.useState(false);
     const [recordedChunks, setRecordedChunks] = React.useState([]);
+    const [isMinimized, setIsMinimized] = useState(false);
+
+    // Function to toggle the webcam on and off
+    const toggleWebcam = () => {
+      setIsMinimized(!isMinimized);
+    };
   
-    const handleStartCaptureClick = React.useCallback(() => {
+    // Function to close the webcam
+    const closeWebcam = () => {
+      setIsMinimized(true);
+    };
+  
+    const handleVoiceAndVideoCapture = () =>{
+        handleStartCaptureClick(true);
+    }
+      
+    const videoConstraints = {
+      width: 200,
+      height: 200,
+      facingMode: "user"
+    };
+
+    const handleStartCaptureClick = React.useCallback((wantVoice) => {
+      if(wantVoice){
+        toggleListening();
+      }
       setCapturing(true);
       mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
         mimeType: "video/webm"
@@ -51,17 +81,112 @@ const WebcamStreamCapture = () => {
     }, [recordedChunks]);
   
     return (
-      <div style={{ marginBottom: '30px', width: '70%', height: '70%', borderRadius: '0%', overflow: 'hidden', position: 'relative' }}>
-        {}
-        <Webcam audio={true} ref={webcamRef} muted = {true} mirrored={true}/>
-            {capturing ? (
-            <button onClick={handleStopCaptureClick}>Stop Capture</button>
+      <div>
+        <div className={isMinimized? "webcam-container webcome-circle-close" : "webcam-container webcome-circle-open" }>
+          {isMinimized ? (
+            <IconButton aria-label="Maximize Webcam" onClick={toggleWebcam}>
+              <VideoCameraFrontIcon/>
+            </IconButton>
           ) : (
-            <button onClick={handleStartCaptureClick}>Start Capture</button>
+            <>
+            <div style={{height: "200px"}}>
+              <Webcam audio={true} ref={webcamRef} muted = {true} mirrored={true}/>
+            </div>
+            <IconButton
+                aria-label="Close Webcam"
+                onClick={closeWebcam}
+                style={{
+                  position: 'absolute',
+                  top: 80,
+                  right: -10,
+                  backgroundColor: 'white',
+                  borderRadius: '50%'
+                }}
+              >
+                <CancelIcon />
+              </IconButton>
+            </>
           )}
-          {recordedChunks.length > 0 && (
-            <button onClick={handleDownload}>Download</button>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-around", gap: "20px"}}>
+          <Tooltip title="Clear Chat">
+            <Button
+              sx={{
+                backgroundColor: '#233036',
+                '&:hover': {
+                  backgroundColor: '#447796',
+                },
+              }}
+              variant="contained"
+              onClick={resetTranscript}
+            >
+              Clear STT
+            </Button>
+          </Tooltip>
+          {capturing ? (
+              <Tooltip title="Stop Capture">
+                <Button
+                  sx={{
+                    backgroundColor: '#233036',
+                    '&:hover': {
+                      backgroundColor: '#447796',
+                    },
+                  }}
+                  variant="contained"
+                  onClick={handleStopCaptureClick}
+                >
+                  Stop Capture
+              </Button>
+              </Tooltip>
+            ) : (
+              <>
+              <Tooltip title="Start Capture">
+                <Button
+                  sx={{
+                    backgroundColor: '#233036',
+                    '&:hover': {
+                      backgroundColor: '#447796',
+                    },
+                  }}
+                  variant="contained"
+                  onClick={handleStartCaptureClick}
+                >
+                  Start Capture
+              </Button>
+              </Tooltip>
+              <Tooltip title="Start Capture (With Audio)">
+                <Button
+                  sx={{
+                    backgroundColor: '#233036',
+                    '&:hover': {
+                      backgroundColor: '#447796',
+                    },
+                  }}
+                  variant="contained"
+                  onClick={handleVoiceAndVideoCapture}
+                >
+                  Start Capture (With Audio)
+              </Button>
+              </Tooltip>
+              </>
+            )}
+            {recordedChunks.length > 0 && (
+              <Tooltip title="Download">
+                <Button
+                  sx={{
+                    backgroundColor: '#233036',
+                    '&:hover': {
+                      backgroundColor: '#447796',
+                    },
+                  }}
+                  variant="contained"
+                  onClick={handleDownload}
+                >
+                  Download
+                </Button>
+            </Tooltip>
           )}
+        </div>
       </div>
     );
   };
