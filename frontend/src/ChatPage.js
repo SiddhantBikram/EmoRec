@@ -22,7 +22,8 @@ import VolumeMuteIcon from '@mui/icons-material/VolumeMute';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Dictaphone from './Dictaphone';
-import WebcamComp from './Webcam';
+import WebcamCompStreamCapture from './WebcamStreamCapture';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const ChatPage = () => {
   const [message, setMessage] = useState('');
@@ -56,6 +57,10 @@ const ChatPage = () => {
 
   // Text-to-speech status
   const [textToSpeechStatus, setTextToSpeechStatus] = useState({});
+
+  //Speech to text 
+  const [isListening, setIsListening] = useState(false);
+  const { transcript, resetTranscript, browserSupportsSpeechRecognition } = useSpeechRecognition();
 
   // Video playback state
   const [videoState, setVideoState] = useState('idle');
@@ -387,6 +392,25 @@ const ChatPage = () => {
     }
   };
 
+  const toggleListening = () => {
+    if (isListening) {
+      SpeechRecognition.stopListening();
+    } else {
+      SpeechRecognition.startListening({ continuous: true });
+    }
+    setIsListening(!isListening);
+  };
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
+  
+  const clearTranscript = () => {
+    toggleListening();
+    resetTranscript();
+  };
+
+
   return (
     <Grid container spacing={2}>
       
@@ -398,7 +422,6 @@ const ChatPage = () => {
               <source src={process.env.PUBLIC_URL + '/' + videoSource} />
             </video>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-              <Dictaphone ref={dictaphoneRef} onTranscriptChange={handleTranscriptChange} />
               <Tooltip title="Open Settings">
                 <Button 
                   variant="contained" 
@@ -429,7 +452,9 @@ const ChatPage = () => {
       {/* Chat Section (Right) */}
       <Grid item xs={12} md={6} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset", alignSelf: 'center'}}>
-          <WebcamComp/>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+            <WebcamCompStreamCapture toggleListening={toggleListening} resetTranscript={resetTranscript}/>
+          </div>
         </Paper>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset"}}>
           <div className="ChatPage">
@@ -525,7 +550,7 @@ const ChatPage = () => {
         </Paper>
       </Grid>
       
-          {/* Settings Dialog */}
+        {/* Settings Dialog */}
       <Dialog open={isSettingsOpen} onClose={() => handleCloseSettings(false)}>
           <DialogTitle>Text to Speech Settings</DialogTitle>
             <DialogContent>        
