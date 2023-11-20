@@ -182,8 +182,8 @@ body {
 
 .webcome-circle-open {
   margin-bottom: 30px;
-  width: 45%;
-  margin-left: 27%;
+  width: 60%;
+  margin-left: 20%;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
@@ -191,8 +191,8 @@ body {
 
 .webcome-circle-close {
   margin-bottom: 30px;
-  width: 17%;
-  margin-left: 40%;
+  width: 13%;
+  margin-left: 41%;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
