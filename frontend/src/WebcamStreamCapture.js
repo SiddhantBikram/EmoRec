@@ -7,7 +7,7 @@ import {  Button, Tooltip } from '@mui/material';
 import './ChatPage.css';
 
 
-const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
+const WebcamStreamCapture = ({ toggleListening, resetTranscript, clearTranscript }) => {
     const webcamRef = React.useRef(null);
     const mediaRecorderRef = React.useRef(null);
     const [capturing, setCapturing] = React.useState(false);
@@ -39,6 +39,7 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
         toggleListening();
       }
       setCapturing(true);
+
       mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
         mimeType: "video/webm"
       });
@@ -47,6 +48,7 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
         handleDataAvailable
       );
       mediaRecorderRef.current.start();
+     
     }, [webcamRef, setCapturing, mediaRecorderRef]);
   
     const handleDataAvailable = React.useCallback(
@@ -60,6 +62,7 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
   
     const handleStopCaptureClick = React.useCallback(() => {
       mediaRecorderRef.current.stop();
+      clearTranscript(true);
       setCapturing(false);
     }, [mediaRecorderRef, webcamRef, setCapturing]);
   
@@ -109,20 +112,6 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
           )}
         </div>
         <div style={{ display: "flex", justifyContent: "space-around", gap: "20px"}}>
-          <Tooltip title="Clear Chat">
-            <Button
-              sx={{
-                backgroundColor: '#233036',
-                '&:hover': {
-                  backgroundColor: '#447796',
-                },
-              }}
-              variant="contained"
-              onClick={resetTranscript}
-            >
-              Clear STT
-            </Button>
-          </Tooltip>
           {capturing ? (
               <Tooltip title="Stop Capture">
                 <Button
@@ -149,9 +138,9 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
                     },
                   }}
                   variant="contained"
-                  onClick={handleStartCaptureClick}
-                >
-                  Start Capture
+                  onClick={() => handleStartCaptureClick(false)}
+                  >
+                  Record Video
               </Button>
               </Tooltip>
               <Tooltip title="Start Capture (With Audio)">
@@ -165,7 +154,7 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript }) => {
                   variant="contained"
                   onClick={handleVoiceAndVideoCapture}
                 >
-                  Start Capture (With Audio)
+                  Record Video + Audio
               </Button>
               </Tooltip>
               </>

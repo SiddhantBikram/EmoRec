@@ -199,6 +199,11 @@ const ChatPage = () => {
     }
   }, [aiLatestMessage, selectedVoice, selectedPitch, selectedRate, selectedVolume, synthesisPlaying]);
 
+  useEffect(() => {
+    handleTranscriptChange(transcript);
+  }, [transcript]);
+
+
   const playTextToSpeech = (text, voice, pitch, rate, volume, shouldSkip) => {
     return new Promise((resolve, reject) => {
       if (synthesisPlaying) {
@@ -320,8 +325,9 @@ const ChatPage = () => {
       }, 1000); // Simulate response delay (1 second in this example)
     }
 
-    if (dictaphoneRef.current && dictaphoneRef.current.isRecording) {
-      dictaphoneRef.current.clearTranscript();
+    if (isListening) {
+      setDictaphoneTranscript("");
+      resetTranscript();
     }
   };  
 
@@ -392,7 +398,13 @@ const ChatPage = () => {
     }
   };
 
-  const toggleListening = () => {
+  const toggleListening = (forceStop) => {
+    if(forceStop) {
+      SpeechRecognition.stopListening();
+      setIsListening(false);
+      return;
+    }
+
     if (isListening) {
       SpeechRecognition.stopListening();
     } else {
@@ -405,11 +417,10 @@ const ChatPage = () => {
     return <span>Browser doesn't support speech recognition.</span>;
   }
   
-  const clearTranscript = () => {
-    toggleListening();
+  const clearTranscript = (forceStop) => {
+    toggleListening(forceStop);
     resetTranscript();
   };
-
 
   return (
     <Grid container spacing={2}>
@@ -453,7 +464,7 @@ const ChatPage = () => {
       <Grid item xs={12} md={6} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset", alignSelf: 'center'}}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-            <WebcamCompStreamCapture toggleListening={toggleListening} resetTranscript={resetTranscript}/>
+            <WebcamCompStreamCapture toggleListening={toggleListening} resetTranscript={resetTranscript} clearTranscript={clearTranscript}/>
           </div>
         </Paper>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset"}}>
