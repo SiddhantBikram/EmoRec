@@ -464,7 +464,7 @@ const ChatPage = () => {
       <Grid item xs={12} md={6} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset", alignSelf: 'center'}}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-            <WebcamCompStreamCapture toggleListening={toggleListening} resetTranscript={resetTranscript} clearTranscript={clearTranscript}/>
+            <WebcamCompStreamCapture handleSendMessage={handleSendMessage} toggleListening={toggleListening} clearTranscript={clearTranscript}/>
           </div>
         </Paper>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset"}}>
