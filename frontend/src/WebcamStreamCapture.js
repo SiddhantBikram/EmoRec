@@ -60,12 +60,12 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
       [setRecordedChunks]
     );
   
-    const handleStopCaptureClick = React.useCallback(() => {
+    const handleStopCaptureClick = () => {
       mediaRecorderRef.current.stop();
+      handleSendMessage();
       clearTranscript(true);
       setCapturing(false);
-      handleSendMessage();
-    }, [mediaRecorderRef, webcamRef, setCapturing]);
+    };
   
     const handleDownload = React.useCallback(() => {
       if (recordedChunks.length) {
