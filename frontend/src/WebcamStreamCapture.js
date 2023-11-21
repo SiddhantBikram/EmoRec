@@ -48,7 +48,6 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
         handleDataAvailable
       );
       mediaRecorderRef.current.start();
-     
     }, [webcamRef, setCapturing, mediaRecorderRef]);
   
     const handleDataAvailable = React.useCallback(
@@ -60,11 +59,14 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
       [setRecordedChunks]
     );
   
-    const handleStopCaptureClick = () => {
+    const handleStopCaptureClick = React.useCallback(() => {
       mediaRecorderRef.current.stop();
-      handleSendMessage();
       clearTranscript(true);
       setCapturing(false);
+    }, [mediaRecorderRef, webcamRef, setCapturing, capturing]);
+
+    const handleStop = () => {
+      handleSendMessage();
     };
   
     const handleDownload = React.useCallback(() => {
@@ -123,7 +125,12 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
                     },
                   }}
                   variant="contained"
-                  onClick={handleStopCaptureClick}
+                  onClick={() => 
+                    {
+                      handleStopCaptureClick();
+                      handleStop();
+                    }
+                  }
                 >
                   Stop Capture
               </Button>
