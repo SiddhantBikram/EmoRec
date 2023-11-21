@@ -7,7 +7,7 @@ import {  Button, Tooltip } from '@mui/material';
 import './ChatPage.css';
 
 
-const WebcamStreamCapture = ({ toggleListening, resetTranscript, clearTranscript }) => {
+const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscript }) => {
     const webcamRef = React.useRef(null);
     const mediaRecorderRef = React.useRef(null);
     const [capturing, setCapturing] = React.useState(false);
@@ -64,6 +64,7 @@ const WebcamStreamCapture = ({ toggleListening, resetTranscript, clearTranscript
       mediaRecorderRef.current.stop();
       clearTranscript(true);
       setCapturing(false);
+      handleSendMessage();
     }, [mediaRecorderRef, webcamRef, setCapturing]);
   
     const handleDownload = React.useCallback(() => {
