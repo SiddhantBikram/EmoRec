@@ -28,7 +28,7 @@ const fn = async (video) => {
     }
 }
 
-const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscript }) => {
+const WebcamStreamCapture = ({ toggleListening, handleAIResponse, handleSendMessage, clearTranscript }) => {
     const webcamRef = React.useRef(null);
     const mediaRecorderRef = React.useRef(null);
     const [capturing, setCapturing] = React.useState(false);
@@ -61,6 +61,7 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
         toggleListening();
       }
       setCapturing(true);
+      handleAIResponse();
 
       mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
         mimeType: "video/webm"
@@ -70,6 +71,7 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
         handleDataAvailable
       );
       mediaRecorderRef.current.start();
+
     }, [webcamRef, setCapturing, mediaRecorderRef]);
   
     const handleDataAvailable = React.useCallback(

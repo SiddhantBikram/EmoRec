@@ -203,7 +203,6 @@ const ChatPage = () => {
     handleTranscriptChange(transcript);
   }, [transcript]);
 
-
   const playTextToSpeech = (text, voice, pitch, rate, volume, shouldSkip) => {
     return new Promise((resolve, reject) => {
       if (synthesisPlaying) {
@@ -293,38 +292,40 @@ const ChatPage = () => {
     }
   };
 
+  const handleAIResponse = () => {
+    // Simulate AI response after a short delay
+    setTimeout(() => {
+      handleChatMessage('idle');
+      const randomReply = getRandomLoremIpsum(); // API RESPONSE
+      // Add AI message to the chat log
+      const newAiMessageIndex = chatLog.length; // Calculate the index of the new AI message
+      setChatLog((prevChatLog) => [...prevChatLog, { sender: 'AI', message: randomReply }]);
+      // Update the aiLatestMessage state with the AI's response message
+      setAiLatestMessage(randomReply);
+      // Set the index of the latest AI message
+      setLatestAiMessageIndex(newAiMessageIndex + 1);
+
+      // Check if the AI's message contains 'video' to start the video player
+      if (videoPlayerRef.current) {
+        videoPlayerRef.current.play();
+      }
+
+      // Play text-to-speech for AI response
+      handlePlayStopTextToSpeech(newAiMessageIndex + 1, randomReply); // Pass the index of the latest message
+
+      handleChatMessage('play');
+    }, 1000); // Simulate response delay (1 second in this example)
+  }
+
   const handleSendMessage = () => {
     const combinedMessage = message.trim() || dictaphoneTranscript.trim(); // Use STT transcript if message is empty
-    if (combinedMessage !== '') {
+    if (combinedMessage !== '' ) {
       // Add user message to the chat log
       setChatLog((prevChatLog) => [...prevChatLog, { sender: 'You', message: combinedMessage }]);
       setMessage('');
       setDictaphoneTranscript('');
-      
-      // Simulate AI response after a short delay
-      setTimeout(() => {
-        handleChatMessage('idle');
-        const randomReply = getRandomLoremIpsum(); // API RESPONSE
-        // Add AI message to the chat log
-        const newAiMessageIndex = chatLog.length; // Calculate the index of the new AI message
-        setChatLog((prevChatLog) => [...prevChatLog, { sender: 'AI', message: randomReply }]);
-        // Update the aiLatestMessage state with the AI's response message
-        setAiLatestMessage(randomReply);
-        // Set the index of the latest AI message
-        setLatestAiMessageIndex(newAiMessageIndex + 1);
-  
-        // Check if the AI's message contains 'video' to start the video player
-        if (videoPlayerRef.current) {
-          videoPlayerRef.current.play();
-        }
-  
-        // Play text-to-speech for AI response
-        handlePlayStopTextToSpeech(newAiMessageIndex + 1, randomReply); // Pass the index of the latest message
-  
-        handleChatMessage('play');
-      }, 1000); // Simulate response delay (1 second in this example)
+      handleAIResponse();
     }
-
     if (isListening) {
       setDictaphoneTranscript("");
       resetTranscript();
@@ -464,7 +465,7 @@ const ChatPage = () => {
       <Grid item xs={12} md={6} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset", alignSelf: 'center'}}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
-            <WebcamCompStreamCapture handleSendMessage={handleSendMessage} toggleListening={toggleListening} clearTranscript={clearTranscript}/>
+            <WebcamCompStreamCapture handleAIResponse={handleAIResponse} handleSendMessage={handleSendMessage} toggleListening={toggleListening} clearTranscript={clearTranscript}/>
           </div>
         </Paper>
         <Paper sx={{backgroundColor: "unset", boxShadow: "unset"}}>
