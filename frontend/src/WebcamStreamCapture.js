@@ -6,6 +6,27 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import {  Button, Tooltip } from '@mui/material';
 import './ChatPage.css';
 
+const fn = async (video) => {
+  const formData = new FormData();
+    formData.append('video', video, 'abc.webm');
+
+    try {
+      const response = await fetch('http://localhost:8080/app', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("Hello", response)
+        alert('Video uploaded successfully');
+      } else {
+        alert('Upload failed');
+      }
+    } catch (error) {
+      alert('Error while uploading');
+      console.error('Upload error:', error);
+    }
+}
 
 const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscript }) => {
     const webcamRef = React.useRef(null);
@@ -14,6 +35,7 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
     const [recordedChunks, setRecordedChunks] = React.useState([]);
     const [isMinimized, setIsMinimized] = useState(false);
 
+  
     // Function to toggle the webcam on and off
     const toggleWebcam = () => {
       setIsMinimized(!isMinimized);
@@ -63,6 +85,12 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
       mediaRecorderRef.current.stop();
       clearTranscript(true);
       setCapturing(false);
+      const blob = new Blob(recordedChunks, {
+        type: "video/webm",
+        filename: "react-webcam-stream-capture.webm"
+      });
+      fn(blob)
+
     }, [mediaRecorderRef, webcamRef, setCapturing, capturing]);
 
     const handleStop = () => {
@@ -83,7 +111,9 @@ const WebcamStreamCapture = ({ toggleListening, handleSendMessage, clearTranscri
         a.click();
         window.URL.revokeObjectURL(url);
         setRecordedChunks([]);
+        console.log(blob, url, a, recordedChunks)
       }
+      
     }, [recordedChunks]);
   
     return (
