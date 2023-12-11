@@ -125,7 +125,6 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
-    // Scroll to the latest message whenever chatLog changes
     const chatLogContainer = chatLogRef.current;
     if (chatLogContainer) {
       chatLogContainer.scrollTop = chatLogContainer.scrollHeight;
@@ -423,6 +422,8 @@ const ChatPage = () => {
     resetTranscript();
   };
 
+
+
   return (
     <Grid container spacing={2}>
       
@@ -472,7 +473,9 @@ const ChatPage = () => {
           <div className="ChatPage">
             <div className="chatContainer">
               <div className="chatLog" ref={chatLogRef}>
-                {chatLog.map((chat, index) => (
+                {chatLog.length < 1 && <div className='startMessage'>Hey! I'm LUNA, ready to assist you on your mental health journey.</div>}
+              
+              {chatLog.map((chat, index) => (
                   <div className="row" style={{ display: 'flex' }} key={index}>
                     <div
                       className={`col-12 chatMessage ${chat.sender === 'AI' ? 'chatMessage-AI' : ''}`}
