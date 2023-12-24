@@ -318,13 +318,15 @@ const ChatPage = () => {
 
   const handleSendMessage = () => {
     const combinedMessage = message.trim() || dictaphoneTranscript.trim(); // Use STT transcript if message is empty
+   
     if (combinedMessage !== '' ) {
       // Add user message to the chat log
       setChatLog((prevChatLog) => [...prevChatLog, { sender: 'You', message: combinedMessage }]);
       setMessage('');
       setDictaphoneTranscript('');
-      handleAIResponse();
+      //handleAIResponse();
     }
+    
     if (isListening) {
       setDictaphoneTranscript("");
       resetTranscript();
