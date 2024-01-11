@@ -8,7 +8,9 @@ import './ChatPage.css';
 
 const fn = async (video) => {
   const formData = new FormData();
-    formData.append('video', video, 'abc.webm');
+    console.log('File size:', video.size);
+    formData.append('video', video, 'react-webcam-stream-capture.webm');
+    // formData.append('text', video, 'react-webcam-stream-capture.webm');
 
     try {
       const response = await fetch('http://localhost:8080/app', {
@@ -16,9 +18,20 @@ const fn = async (video) => {
         body: formData,
       });
 
+
       if (response.ok) {
-        console.log("Hello", response)
+
+        // console.log("Hello", response)
+        const responseData = await response.json();
+        const { labels, maximum } = responseData;
+  
+        console.log('Labels:', labels);
+        console.log('Maximum:', maximum);
+        // const max_value = { labels.data}
         alert('Video uploaded successfully');
+        alert('Maximum:' + JSON.stringify(maximum));
+        alert('Labels:' + JSON.stringify(labels));
+
       } else {
         alert('Upload failed');
       }
@@ -87,13 +100,21 @@ const WebcamStreamCapture = ({ toggleListening, handleAIResponse, handleSendMess
       mediaRecorderRef.current.stop();
       clearTranscript(true);
       setCapturing(false);
-      const blob = new Blob(recordedChunks, {
-        type: "video/webm",
-        filename: "react-webcam-stream-capture.webm"
-      });
-      fn(blob)
+      // const blob = new Blob(recordedChunks, {
+      //   type: "video/webm",
+      //   // filename: "react-webcam-stream-capture.webm"
+      // });
+      console.log(recordedChunks)
+      if (recordedChunks.length) {
+        const blob = new Blob(recordedChunks, {
+          type: "video/webm"
+        });
+        console.log(blob);
+        console.log(blob.size);
+        fn(blob);
+      }
 
-    }, [mediaRecorderRef, webcamRef, setCapturing, capturing]);
+    }, [mediaRecorderRef, webcamRef, setCapturing, capturing, recordedChunks]);
 
     const handleStop = () => {
       handleSendMessage();
@@ -104,6 +125,7 @@ const WebcamStreamCapture = ({ toggleListening, handleAIResponse, handleSendMess
         const blob = new Blob(recordedChunks, {
           type: "video/webm"
         });
+        fn(blob);
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         document.body.appendChild(a);
