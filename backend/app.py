@@ -7,11 +7,8 @@ import warnings
 warnings.filterwarnings("ignore")
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-from transformers import AutoTokenizer, AutoModel
-
-tokenizer = AutoTokenizer.from_pretrained("microsoft/xclip-base-patch32")
-model = AutoModel.from_pretrained("microsoft/xclip-base-patch32")
+import whisper_loader
+import text_preds
 
 app = Flask(__name__)
 CORS(app)
@@ -32,14 +29,18 @@ def receive_video():
         print(maximum)
         print(labels)
 
+        text = whisper_loader.whisper_text()
+        print(text)
+        text_prediction = text_preds.text_classify(text)
+        print(text_prediction)
+
         response_data = {
             'message': 'Video received successfully',
             'labels': labels,
-            'maximum': maximum
+            'maximum': maximum,
+            'text_prediction': text_prediction
         }
 
-        inputs = tokenizer(text, padding=True, return_tensors="pt")
-        text_features = model.get_text_features(**inputs)
 
         return (response_data), 200
     except Exception as e:

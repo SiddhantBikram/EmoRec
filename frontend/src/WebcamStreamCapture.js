@@ -23,7 +23,7 @@ const fn = async (video) => {
 
         // console.log("Hello", response)
         const responseData = await response.json();
-        const { labels, maximum } = responseData;
+        const { labels, maximum, text_prediction } = responseData;
   
         console.log('Labels:', labels);
         console.log('Maximum:', maximum);
@@ -31,7 +31,7 @@ const fn = async (video) => {
         alert('Video uploaded successfully');
         alert('Maximum:' + JSON.stringify(maximum));
         alert('Labels:' + JSON.stringify(labels));
-
+        alert('Text_Prediction:' + JSON.stringify(text_prediction));
       } else {
         alert('Upload failed');
       }
