@@ -31,7 +31,7 @@ def text_classify(prompt):
     model = AutoModelForSequenceClassification.from_pretrained("lordtt13/emo-mobilebert")
 
     nlp_sentence_classif = transformers.pipeline('sentiment-analysis', model = model, tokenizer = tokenizer)
-    return nlp_sentence_classif(prompt)
+    return nlp_sentence_classif(prompt['score'])
 # Output: [{'label': 'sad', 'score': 0.93153977394104}]
 
 

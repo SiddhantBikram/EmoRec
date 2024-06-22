@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 tf.get_logger().setLevel('INFO')
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+import os
 
 def face_emo():
     face_classifier = cv2.CascadeClassifier(r'D:\Research\DL Depression\Emotion_Detection_CNN-main\haarcascade_frontalface_default.xml')
@@ -30,20 +31,28 @@ def face_emo():
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_classifier.detectMultiScale(gray)
+        i = 0
 
         for (x, y, w, h) in faces:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 255), 2)
-            roi_gray = gray[y:y+h, x:x+w]
-            roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
 
-            if np.sum([roi_gray]) != 0:
-                roi = roi_gray.astype('float') / 255.0
-                roi = img_to_array(roi)
-                roi = np.expand_dims(roi, axis=0)
+            if i%10==0: 
 
-                prediction = classifier.predict(roi)[0]
-                label = emotion_labels[prediction.argmax()]
-                labels[label]+=1
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 255), 2)
+                roi_gray = gray[y:y+h, x:x+w]
+                roi_gray = cv2.resize(roi_gray, (48, 48), interpolation=cv2.INTER_AREA)
+
+                if np.sum([roi_gray]) != 0:
+                    roi = roi_gray.astype('float') / 255.0
+                    roi = img_to_array(roi)
+                    roi = np.expand_dims(roi, axis=0)
+
+                    prediction = classifier.predict(roi)[0]
+                    label = emotion_labels[prediction.argmax()]
+                    labels[label]+=1
+
+                
+
+            i+=1
         #         label_position = (x, y)
         #         cv2.putText(frame, label, label_position, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
         #     else:
@@ -58,6 +67,9 @@ def face_emo():
     cap.release()
 
     cv2.destroyAllWindows()
+
+    video_path = r"D:\Research\DL Depression\EmoRec\backend\video.webm"
+    os.remove(video_path)
 
     return (max(labels, key = labels.get)), labels
 

@@ -28,10 +28,10 @@ const fn = async (video) => {
         console.log('Labels:', labels);
         console.log('Maximum:', maximum);
         // const max_value = { labels.data}
-        alert('Video uploaded successfully');
-        alert('Maximum:' + JSON.stringify(maximum));
-        alert('Labels:' + JSON.stringify(labels));
-        alert('Text_Prediction:' + JSON.stringify(text_prediction));
+        // alert('Video uploaded successfully');
+        // alert('Maximum:' + JSON.stringify(maximum));
+        // alert('Labels:' + JSON.stringify(labels));
+        // alert('Text_Prediction:' + JSON.stringify(text_prediction));
       } else {
         alert('Upload failed');
       }
@@ -112,6 +112,7 @@ const WebcamStreamCapture = ({ toggleListening, handleAIResponse, handleSendMess
         console.log(blob);
         console.log(blob.size);
         fn(blob);
+        handleDownload()
       }
 
     }, [mediaRecorderRef, webcamRef, setCapturing, capturing, recordedChunks]);

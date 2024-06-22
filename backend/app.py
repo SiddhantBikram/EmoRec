@@ -9,6 +9,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import whisper_loader
 import text_preds
+import responses
 
 app = Flask(__name__)
 CORS(app)
@@ -33,12 +34,14 @@ def receive_video():
         print(text)
         text_prediction = text_preds.text_classify(text)
         print(text_prediction)
+        response = responses.return_response(score)
 
         response_data = {
             'message': 'Video received successfully',
             'labels': labels,
             'maximum': maximum,
-            'text_prediction': text_prediction
+            'text_prediction': text_prediction,
+            'response': response
         }
 
 
